@@ -76,3 +76,26 @@ class TestOrderBook(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+
+def test_cancel_buy_order():
+    book = OrderBook()
+    book.add_order(Order(101, 10000, 5, Side.BUY))
+
+    assert book.cancel_order(101) is True
+    assert book.best_bid() is None
+
+
+def test_cancel_sell_order():
+    book = OrderBook()
+    book.add_order(Order(201, 10100, 5, Side.SELL))
+
+    assert book.cancel_order(201) is True
+    assert book.best_ask() is None
+
+
+def test_cancel_nonexistent_order():
+    book = OrderBook()
+
+    assert book.cancel_order(999) is False
