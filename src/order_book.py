@@ -104,3 +104,14 @@ class OrderBook:
 
     def best_ask(self) -> Optional[Order]:
         return self.asks[0] if self.asks else None
+
+
+    def cancel_order(self, order_id: int) -> bool:
+        """Cancel a resting order by ID. Return True if found."""
+        for book_side in (self.bids, self.asks):
+            for index, order in enumerate(book_side):
+                if order.order_id == order_id:
+                    book_side.pop(index)
+                    return True
+
+        return False
