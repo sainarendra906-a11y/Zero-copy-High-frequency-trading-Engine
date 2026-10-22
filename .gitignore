@@ -2,3 +2,12 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+
+# Build artifacts
+build/
+*.egg-info/
+*.pyd
+*.dll
+
+# Generated Cython C files
+src/cython_engine.c
