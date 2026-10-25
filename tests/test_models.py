@@ -36,5 +36,11 @@ class TestOrder(unittest.TestCase):
             Order.from_bytes(b"bad")
 
 
+    def test_invalid_binary_side(self):
+        invalid_data = ORDER_STRUCT.pack(1, 10000, 5, 99)
+
+        with self.assertRaisesRegex(ValueError, "Invalid order side"):
+            Order.from_bytes(invalid_data)
+
 if __name__ == "__main__":
     unittest.main()
