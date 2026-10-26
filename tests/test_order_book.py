@@ -99,3 +99,26 @@ def test_cancel_nonexistent_order():
     book = OrderBook()
 
     assert book.cancel_order(999) is False
+def test_buy_order_matches_multiple_asks_at_best_price_first():
+    book = OrderBook()
+
+    book.add_order(Order(1, 9900, 2, Side.SELL))
+    book.add_order(Order(2, 10000, 3, Side.SELL))
+
+    trades = book.add_order(
+        Order(3, 10000, 4, Side.BUY)
+    )
+
+    assert len(trades) == 2
+
+    assert trades[0].sell_order_id == 1
+    assert trades[0].price == 9900
+    assert trades[0].quantity == 2
+
+    assert trades[1].sell_order_id == 2
+    assert trades[1].price == 10000
+    assert trades[1].quantity == 2
+
+    assert book.best_ask().order_id == 2
+    assert book.best_ask().quantity == 1
+    assert book.best_bid() is None
