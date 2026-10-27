@@ -41,6 +41,18 @@ class TestOrder(unittest.TestCase):
 
         with self.assertRaisesRegex(ValueError, "Invalid order side"):
             Order.from_bytes(invalid_data)
+    def test_maximum_supported_values_round_trip(self):
+        order = Order(
+            0xFFFFFFFFFFFFFFFF,
+            0xFFFFFFFFFFFFFFFF,
+            0xFFFFFFFF,
+            Side.SELL,
+        )
+
+        restored = Order.from_bytes(order.to_bytes())
+
+        self.assertEqual(restored, order)
 
 if __name__ == "__main__":
     unittest.main()
+
