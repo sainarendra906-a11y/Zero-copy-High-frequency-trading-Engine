@@ -122,3 +122,17 @@ def test_buy_order_matches_multiple_asks_at_best_price_first():
     assert book.best_ask().order_id == 2
     assert book.best_ask().quantity == 1
     assert book.best_bid() is None
+
+
+def test_cancel_partially_filled_buy_order():
+    book = OrderBook()
+
+    book.add_order(Order(101, 10000, 5, Side.BUY))
+    book.add_order(Order(102, 9900, 3, Side.SELL))
+
+    # Two units of the buy order should remain.
+    assert book.best_bid().quantity == 2
+
+    # Cancel the remaining quantity.
+    assert book.cancel_order(101) is True
+    assert book.best_bid() is None
