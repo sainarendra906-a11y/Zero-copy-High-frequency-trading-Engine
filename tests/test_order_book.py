@@ -132,5 +132,21 @@ class TestOrderBook(unittest.TestCase):
         self.assertEqual(len(book.bids), 1)
         self.assertEqual(book.best_bid().order_id, 202)
         self.assertEqual(book.best_bid().quantity, 3)
+    def test_cancelling_same_order_twice(self):
+        book = OrderBook()
+
+        order = Order(
+            order_id=301,
+            price=10500,
+            quantity=4,
+            side=Side.BUY
+        )
+
+        book.add_order(order)
+
+        self.assertTrue(book.cancel_order(301))
+        self.assertFalse(book.cancel_order(301))
+        self.assertIsNone(book.best_bid())
+        self.assertEqual(len(book.bids), 0)   
 if __name__ == "__main__":
     unittest.main()
