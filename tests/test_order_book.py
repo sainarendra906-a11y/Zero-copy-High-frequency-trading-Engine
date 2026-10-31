@@ -148,5 +148,34 @@ class TestOrderBook(unittest.TestCase):
         self.assertFalse(book.cancel_order(301))
         self.assertIsNone(book.best_bid())
         self.assertEqual(len(book.bids), 0)   
+    def test_cancel_partially_filled_sell_order(self):
+        book = OrderBook()
+
+        sell = Order(
+            order_id=401,
+            price=9900,
+            quantity=5,
+            side=Side.SELL
+        )
+
+        buy = Order(
+            order_id=402,
+            price=10000,
+            quantity=3,
+            side=Side.BUY
+        )
+
+        book.add_order(sell)
+        trades = book.add_order(buy)
+
+        self.assertEqual(len(trades), 1)
+        self.assertEqual(trades[0].quantity, 3)
+
+        self.assertIsNotNone(book.best_ask())
+        self.assertEqual(book.best_ask().order_id, 401)
+        self.assertEqual(book.best_ask().quantity, 2)
+
+        self.assertTrue(book.cancel_order(401))
+        self.assertIsNone(book.best_ask())        
 if __name__ == "__main__":
     unittest.main()
