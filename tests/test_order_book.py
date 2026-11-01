@@ -176,6 +176,30 @@ class TestOrderBook(unittest.TestCase):
         self.assertEqual(book.best_ask().quantity, 2)
 
         self.assertTrue(book.cancel_order(401))
-        self.assertIsNone(book.best_ask())        
+        self.assertIsNone(book.best_ask())
+    def test_cancel_sell_order_preserves_other_orders(self):
+        book = OrderBook()
+
+        first = Order(
+            order_id=501,
+            price=10500,
+            quantity=4,
+            side=Side.SELL
+        )
+        second = Order(
+            order_id=502,
+            price=10600,
+            quantity=6,
+            side=Side.SELL
+        )
+
+        book.add_order(first)
+        book.add_order(second)
+
+        self.assertTrue(book.cancel_order(501))
+
+        self.assertEqual(len(book.asks), 1)
+        self.assertEqual(book.best_ask().order_id, 502)
+        self.assertEqual(book.best_ask().quantity, 6)        
 if __name__ == "__main__":
     unittest.main()
