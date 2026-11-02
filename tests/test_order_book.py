@@ -201,5 +201,35 @@ class TestOrderBook(unittest.TestCase):
         self.assertEqual(len(book.asks), 1)
         self.assertEqual(book.best_ask().order_id, 502)
         self.assertEqual(book.best_ask().quantity, 6)        
+    def test_cancel_order_preserves_trade_history(self):
+        book = OrderBook()
+
+        buy = Order(
+            order_id=601,
+            price=10000,
+            quantity=5,
+            side=Side.BUY
+        )
+        sell = Order(
+            order_id=602,
+            price=9900,
+            quantity=3,
+            side=Side.SELL
+        )
+
+        book.add_order(buy)
+        book.add_order(sell)
+
+        self.assertEqual(len(book.trades), 1)
+
+        remaining_order = book.best_bid()
+        self.assertIsNotNone(remaining_order)
+        self.assertEqual(remaining_order.quantity, 2)
+
+        self.assertTrue(book.cancel_order(601))
+
+        self.assertEqual(len(book.trades), 1)
+        self.assertEqual(book.trades[0].quantity, 3)
+        self.assertIsNone(book.best_bid())
 if __name__ == "__main__":
     unittest.main()
